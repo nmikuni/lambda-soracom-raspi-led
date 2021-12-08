@@ -1,0 +1,31 @@
+service: raspi-led
+provider:
+  name: aws
+  runtime: python3.8
+  region: ap-northeast-1
+  stage: dev
+  timeout: 60
+plugins:
+  - serverless-dotenv-plugin
+functions:
+  operate:
+    handler: application_pattern.lambda_handler
+    timeout: 60
+    memorySize: 256
+    role: OperateRole
+resources:
+  Resources:
+    OperateRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+          - arn:aws:iam::aws:policy/AWSIoTDataAccess
